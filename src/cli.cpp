@@ -17,6 +17,9 @@
 #include "frameBuffer.h"
 #include "object.h"
 #include "camera.h"
+#include "curve.h"
+#include "bezier.h"
+#include "bspline.h"
 
 
 Cli::Cli(Scene* scene):
@@ -54,59 +57,13 @@ void Cli::processInput()
     else if(command == "save" && tokens.size() == 2)
         cmdSave(tokens[1]); 
 
+    else if(command == "displayCurveInfo" && tokens.size() == 1)
+        cmdDisplayCurveInfo();
 
-    else if(command == "translate" && tokens.size() == 5)
-        cmdTranslate(std::stoi(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]));
-
-    else if(command == "scale" && tokens.size() == 5)
-        cmdScale(std::stoi(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]));
-
-    else if(command == "rotate" && tokens.size() == 9)
-        cmdRotate(std::stoi(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]), std::stof(tokens[5]), std::stof(tokens[6]), std::stof(tokens[7]), std::stof(tokens[8]));
-
-    else if(command == "remove" && tokens.size() == 2)
-        cmdRemove(std::stoi(tokens[1]));
 
     else if(command == "help" && tokens.size() == 1)
         cmdHelp();
 
-    else if(command == "displayContents" && tokens.size() == 1)
-        cmdDisplayObjects();
-
-    else if(command == "displayVertices" && tokens.size() == 2)
-        cmdDisplayVertices(std::stof(tokens[1]));
-
-
-
-
-
-    else if(command == "setLightPos" && tokens.size() == 4)
-        cmdSetLightPos(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-
-    else if(command == "setLightIntensity" && tokens.size() == 4)
-        cmdSetLightIntensity(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-
-    else if(command == "setLightAmbIntensity" && tokens.size() == 4)
-        cmdSetLightAmbIntensity(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-
-    else if(command == "setK" && tokens.size() == 2)
-        cmdSetK(std::stof(tokens[1]));
-
-    else if(command == "setPhongConstant" && tokens.size() == 2)
-        cmdSetPhongConstant(std::stof(tokens[1]));
-
-    else if(command == "setKA" && tokens.size() == 4)
-        cmdSetKA(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-
-    else if(command == "setKD" && tokens.size() == 4)
-        cmdSetKD(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-
-    else if(command == "setKS" && tokens.size() == 4)
-        cmdSetKS(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-
-    else if(command == "setFrom" && tokens.size() == 4)
-        cmdSetFrom(std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
-    
 
 
     
@@ -195,20 +152,8 @@ void Cli::cmdHelp() const
 
     std::cout << "load: 'load fileName'" << std::endl;
     std::cout << "save: 'save fileName'" << std::endl;
-    std::cout << "translate: 'translate id xTrans yTrans zTrans'" << std::endl;
-    std::cout << "scale: 'scale id xScale yScale zScale'" << std::endl;
-    std::cout << "rotate: 'rotate id p0.x p0.y p0.z p1.x p1.y p1.z angle'" << std::endl;
-    std::cout << "displayContents: 'displayContents'" << std::endl;
-    std::cout << "displayVertices: 'displayVertices id'" << std::endl;
-    std::cout << "setLightPos: 'setLightPos x y z'" << std::endl;
-    std::cout << "setLightIntensity: 'setLightPos r g b'" << std::endl;
-    std::cout << "setLightAmbIntensity: 'setLightAmbIntensity r g b'" << std::endl;
-    std::cout << "setK: 'setK val'" << std::endl;
-    std::cout << "setPhongConstant: 'setPhongConstant val'" << std::endl;
-    std::cout << "setKA: 'setKA r g b'" << std::endl;
-    std::cout << "setKD: 'setKD r g b'" << std::endl;
-    std::cout << "setKS: 'setKS r g b'" << std::endl;
-    std::cout << "setFrom: 'setFrom x y z'" << std::endl;
+    std::cout << "displayCurveInfo: 'displayCurveInfo'" << std::endl;
+
     std::cout << "exit: 'exit'" << std::endl;
 
     std::cout << "--------------------------------------" << std::endl;
@@ -280,3 +225,24 @@ void Cli::cmdDisplayVertices(int id) const
 {
     m_scene->displayVertices(id);
 }
+
+
+
+
+void Cli::cmdDisplayCurveInfo() const
+{
+    std::cout << "\n***** SCENE CURVE INFORMATION *****\n" << std::endl;
+
+    for(auto& curve : m_scene->m_curves)
+    {
+        std::cout << "-----------------------------------------" << std::endl;
+        curve->print();
+        std::cout << "-----------------------------------------\n" << std::endl;
+
+    }
+}
+
+
+
+
+

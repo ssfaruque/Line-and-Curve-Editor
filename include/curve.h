@@ -22,6 +22,8 @@ public:
 
     void print() const;
 
+    inline void setNumSegments(int num) {m_numSegments = num;}
+
     virtual void draw() const = 0;
 
 

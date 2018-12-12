@@ -12,6 +12,12 @@
 #include "bezier.h"
 
 
+Bezier::Bezier(const std::vector<Vertex>& points, int numSegments):
+Curve(points, numSegments)
+{
+}
+
+
 Vertex produceBezierPoint(const Vertex& v1, const Vertex& v2, float t)
 {
     Vertex result;
@@ -21,15 +27,41 @@ Vertex produceBezierPoint(const Vertex& v1, const Vertex& v2, float t)
     return result;
 }
 
+
 /* implementation of de Casteljau algorithm */
 void Bezier::draw() const
 {
-    int width = Window::getInstance()->getWidth();
-    int height = Window::getInstance()->getHeight();
+    //int width = Window::getInstance()->getWidth();
+    //int height = Window::getInstance()->getHeight();
+
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    glPointSize(3.0f);
+
+    /* draw control points */
+    glBegin(GL_POINTS);
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    for(auto v : m_points)
+    {
+        clipToNormalCoords(&v.position.x, &v.position.y, -500, 500, -500, 500);
+        glVertex3f(v.position.x, v.position.y, v.position.z);
+    }
+
+    glEnd();
+
+
+
+
+    glPointSize(1.0f);
+
+    /* draw bezier curve using de Casteljau algorithm*/
+    glBegin(GL_POINTS);
+    glPointSize(1.0f);
+    glColor3f(1.0f, 1.0f, 0.0f);
+
     float inc = 1.0f / m_numSegments;
 
-
-    for(float t = 0.0f; t <= 1.0f; t += inc)
+    for(float t = 0.0f; t <= 1.00001f; t += inc)
     {
         std::vector<Vertex> currGenPoints = m_points;
 
@@ -45,11 +77,10 @@ void Bezier::draw() const
         } while(int(currGenPoints.size() > 1 ));
 
 
-        /* convert to clip, normalized, screen coords */
-
-        /* draw currGenPoints[0] */
+        clipToNormalCoords(&currGenPoints[0].position.x, &currGenPoints[0].position.y, -500, 500, -500, 500);
+        glVertex3f(currGenPoints[0].position.x, currGenPoints[0].position.y, currGenPoints[0].position.z);
 
     }
 
-
+    glEnd();
 }

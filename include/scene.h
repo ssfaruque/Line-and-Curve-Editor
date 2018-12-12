@@ -10,6 +10,7 @@
 
 class Object;
 class Camera;
+class Curve;
 
 /* Everything is drawn to the scene and at the
  * end of each iteration of the render loop,
@@ -19,6 +20,7 @@ class Camera;
 class Scene
 {
     private:
+        std::vector<Curve*> m_curves;
         std::vector<Object*> m_objects;
         std::vector<Vertex> m_clippingWindow;
         Light* m_light;

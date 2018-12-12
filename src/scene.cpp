@@ -20,12 +20,16 @@
 #include "window.h"
 #include "frameBuffer.h"
 #include "camera.h"
+#include "curve.h"
+#include "bezier.h"
+#include "bspline.h"
 
 
 BoundingBox Scene::m_boundingBox = {-500, 500, -500, 500, -500, 500};
 
 
 Scene::Scene():
+m_curves({}),
  m_objects({}),
  m_clippingWindow({}),
  m_clipXmin(-1.0f), m_clipXmax(1.0f), m_clipYmin(-1.0f), m_clipYmax(1.0f), m_clipZmin(-1.0f), m_clipZmax(1.0f)
@@ -34,10 +38,25 @@ Scene::Scene():
 
     m_light = new Light(Vector3f(0.0f, 350.0f, 0.0f), Vector3f(500.0, 500.0f, 500.0f));
     m_camera = new Camera(Vector3f(0.0f, 0.0f, 100000000.0f));
+
+
+    std::vector<Vertex> points{};
+
+    points.push_back(Vertex(200, 200, 0));
+    points.push_back(Vertex(200, 300, 0));
+    points.push_back(Vertex(300, 300, 0));
+    points.push_back(Vertex(300, 200, 0));
+
+
+    Curve* curve = new Bezier(points, 50);
+
+    m_curves.push_back(curve);
+
 }
 
 
 Scene::Scene(std::string loadFileName):
+m_curves({}),
 m_objects({}),
 m_clippingWindow({}),
  m_clipXmin(-1.0f), m_clipXmax(1.0f), m_clipYmin(-1.0f), m_clipYmax(1.0f)
@@ -137,36 +156,20 @@ void Scene::clean()
 
 void Scene::draw()
 {
-    calcVertexIntensities();
+    /* draw the grid */
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(-1, 0, 0);
+    glVertex3f(1, 0, 0);
+    glVertex3f(0, 1, 0);
+    glVertex3f(0, -1, 0);
+    glEnd();
 
-    for(auto& object : m_objects)
+    for(auto& curve : m_curves)
     {
-        object->drawWithXYProj(m_boundingBox, m_camera);
+        curve->draw();
     }
 }
-
-
-void Scene::drawWithProjectionXY()
-{
-    // for(auto& object : m_objects)
-    //     object->drawWithProjectionXY(m_boundingBox);
-}
-
-
-void Scene::drawWithProjectionXZ()
-{
-
-}
-
-
-void Scene::drawWithProjectionYZ()
-{
-
-}
-
-
-
-
 
 
 

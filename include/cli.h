@@ -34,6 +34,13 @@ class Cli
         void cmdSetKS(float r, float g, float b);
         void cmdSetFrom(float x, float y, float z);
 
+
+
+        void cmdDisplayCurveInfo() const;
+
+
+
+
         std::vector<std::string> getTokensFromLine(const std::string& line) const;
 
     public:

@@ -79,11 +79,6 @@ void renderScene()
     Window* window = Window::getInstance();
     window->clear();
 
-    // Vector3f a(1.0f);
-    // a = a * 5.0f;
-    // std::cout << a.x << ", " << a.y << ", " << a.z << std::endl;
-    // std::cout << "magnitude: " << glm::length(a) << std::endl;
-
     App* app = App::getInstance();
     app->m_cli->processInput();
     app->m_scene->draw();
@@ -95,13 +90,13 @@ void renderScene()
 
 void showScreen()
 {
-    Window* window = Window::getInstance();
+    // Window* window = Window::getInstance();
 
-    glDrawPixels(window->getFrameBuffer()->getWidth(),
-                 window->getFrameBuffer()->getHeight(),
-                 GL_RGBA,
-                 GL_UNSIGNED_INT_8_8_8_8,
-                 window->getFrameBuffer()->getBuffer());
+    // glDrawPixels(window->getFrameBuffer()->getWidth(),
+    //              window->getFrameBuffer()->getHeight(),
+    //              GL_RGBA,
+    //              GL_UNSIGNED_INT_8_8_8_8,
+    //              window->getFrameBuffer()->getBuffer());
 
     glutSwapBuffers();    
 }
