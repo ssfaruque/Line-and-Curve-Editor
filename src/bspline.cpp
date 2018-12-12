@@ -67,7 +67,6 @@ void Bspline::draw() const
 
 
 
-
     glPointSize(1.0f);
     
     /* draw bspline curve using de boor algorithm */

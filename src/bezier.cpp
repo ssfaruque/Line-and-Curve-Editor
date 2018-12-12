@@ -32,9 +32,6 @@ Vertex produceBezierPoint(const Vertex& v1, const Vertex& v2, float t)
 /* implementation of de Casteljau algorithm */
 void Bezier::draw() const
 {
-    //int width = Window::getInstance()->getWidth();
-    //int height = Window::getInstance()->getHeight();
-
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glPointSize(3.0f);
 
