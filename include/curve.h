@@ -26,6 +26,7 @@ public:
     inline int getId() const {return m_id;}
 
     virtual void draw() const = 0;
+    virtual void printInfo() const = 0;
 
 
 };

@@ -47,8 +47,9 @@ m_curves({}),
     points.push_back(Vertex(300, 300, 0));
     points.push_back(Vertex(300, 200, 0));
 
+    // Curve* curve = new Bezier(points, 50);
 
-    Curve* curve = new Bezier(points, 50);
+    Curve* curve = new Bspline(points, 3, 50);
 
     m_curves.push_back(curve);
 

@@ -10,6 +10,7 @@ private:
 public:
 
     void draw() const;
+    void printInfo() const;
 
     Bezier(const std::vector<Vertex>& points, int numSegments);
 };

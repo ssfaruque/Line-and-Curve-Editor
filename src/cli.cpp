@@ -77,8 +77,13 @@ void Cli::processInput()
 
     else if(command == "bezier" && tokens.size() >= 4)
         cmdBezier(tokens);
-    
 
+    else if(command == "bspline" && tokens.size() >= 5)
+        cmdBspline(tokens);
+
+    else if(command == "setK" && tokens.size() == 3)
+        cmdSetK(std::stoi(tokens[1]), std::stoi(tokens[2]));
+    
     else if(command == "help" && tokens.size() == 1)
         cmdHelp();
 
@@ -173,6 +178,9 @@ void Cli::cmdHelp() const
     std::cout << "deletePoint: 'deletePoint id pointNum'" << std::endl;
     std::cout << "modifyPoint: 'modifyPoint id pointNum x y'" << std::endl;
     std::cout << "setNumSegments: 'setNumSegments id numSegments'" << std::endl;
+    std::cout << "bezier: 'bezier numSegments x0 y0 x1 y1... xn yn'" << std::endl;
+    std::cout << "bspline: 'bspline numSegments k x0 y0 x1 y1... xn yn'" << std::endl;
+    std::cout << "setK: 'setK id k'" << std::endl;
 
 
     std::cout << "exit: 'exit'" << std::endl;
@@ -257,7 +265,7 @@ void Cli::cmdDisplayCurveInfo() const
     for(auto& curve : m_scene->m_curves)
     {
         std::cout << "-----------------------------------------" << std::endl;
-        curve->print();
+        curve->printInfo();
         std::cout << "-----------------------------------------\n" << std::endl;
 
     }
@@ -350,3 +358,35 @@ void Cli::cmdBezier(const std::vector<std::string>& tokens)
     m_scene->m_curves.push_back(curve);
 }
 
+
+void Cli::cmdBspline(const std::vector<std::string>& tokens)
+{
+    int numSegments = std::stoi(tokens[1]);
+    int k           = std::stoi(tokens[2]);
+    std::vector<Vertex> points{};
+
+    for(int i = 3; i < int(tokens.size() - 1); i += 2)
+    {
+        float x = std::stof(tokens[i]);
+        float y = std::stof(tokens[i + 1]);
+        points.push_back(Vertex(x, y, 0));
+    }
+
+    Curve* curve = new Bspline(points, k, numSegments);
+
+    m_scene->m_curves.push_back(curve);
+}
+
+
+void Cli::cmdSetK(int id, int k)
+{
+    for(auto& curve : m_scene->m_curves)
+    {
+        if(curve->getId() == id && k > 0)
+        {
+            Bspline* spline = dynamic_cast<Bspline*>(curve);
+            if(spline)  spline->setK(k);
+            break;
+        }
+    }  
+}

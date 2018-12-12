@@ -5,13 +5,17 @@
 
 class Bspline : public Curve
 {
-private:
+public:
+    int m_k;
 
 public:
 
     void draw() const;
+    void printInfo() const;
 
-    Bspline(const std::vector<Vertex>& points, int numSegments);
+    inline void setK(int k) {m_k = k;} 
+
+    Bspline(const std::vector<Vertex>& points, int k, int numSegments);
 };
 
 

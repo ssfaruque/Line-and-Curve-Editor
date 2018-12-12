@@ -43,6 +43,8 @@ class Cli
         void cmdModifyPoint(int id, int pointNum, float x, float y);
         void cmdSetNumSegments(int id, int numSegments);
         void cmdBezier(const std::vector<std::string>& tokens);
+        void cmdBspline(const std::vector<std::string>& tokens);
+        void cmdSetK(int id, int k);
 
 
         std::vector<std::string> getTokensFromLine(const std::string& line) const;

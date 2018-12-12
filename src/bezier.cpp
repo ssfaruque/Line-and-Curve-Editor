@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #endif
 
+#include <iostream>
 
 #include "graphics.h"
 #include "window.h"
@@ -83,4 +84,11 @@ void Bezier::draw() const
     }
 
     glEnd();
+}
+
+
+void Bezier::printInfo() const
+{
+    std::cout << "Bezier Curve" << std::endl;
+    print();
 }
