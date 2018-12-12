@@ -40,18 +40,18 @@ m_curves({}),
     m_camera = new Camera(Vector3f(0.0f, 0.0f, 100000000.0f));
 
 
-    std::vector<Vertex> points{};
+    // std::vector<Vertex> points{};
 
-    points.push_back(Vertex(200, 200, 0));
-    points.push_back(Vertex(200, 300, 0));
-    points.push_back(Vertex(300, 300, 0));
-    points.push_back(Vertex(300, 200, 0));
+    // points.push_back(Vertex(200, 200, 0));
+    // points.push_back(Vertex(200, 300, 0));
+    // points.push_back(Vertex(300, 300, 0));
+    // points.push_back(Vertex(300, 200, 0));
 
-    // Curve* curve = new Bezier(points, 50);
+    // // Curve* curve = new Bezier(points, 50);
 
-    Curve* curve = new Bspline(points, 3, 50);
+    // Curve* curve = new Bspline(points, 3, 50);
 
-    m_curves.push_back(curve);
+    // m_curves.push_back(curve);
 
 }
 
@@ -194,60 +194,46 @@ void Scene::load(std::string loadFileName)
     if(inf.is_open())
     {
         std::getline(inf, line);
-        int numObjects = std::stoi(line);
+        int numCurves = std::stoi(line);
         std::getline(inf, line);    // empty line
         
-        for(int i = 0; i < numObjects; ++i)
+        for(int i = 0; i < numCurves; ++i)
         {
             std::vector<Vertex> vertices{};
-            std::vector<int> indices{};
-            std::vector<Triangle> triangles{};
 
             std::getline(inf, line);
-            int numPoints = std::stoi(line);
+            int bspline = std::stoi(line);
+
+            int numSegments = 0, k = 0, numPoints = 0;
+            std::getline(inf, line);
+            numSegments = std::stoi(line);
+            
+            if(bspline)
+            {
+                std::getline(inf, line);
+                k = std::stoi(line);
+            }
+
+            std::getline(inf, line);
+            numPoints = std::stoi(line);
 
             for(int j = 0; j < numPoints; ++j)
             {
-                float x, y, z;
+                float x, y;
 
-                // world position
                 std::getline(inf, line);
                 iss << line;
-                iss >> x >> y >> z;
+                iss >> x >> y;
                 iss.clear();
-                Vector3f position(x, y, z);
+                Vertex p(x, y, 0);
 
-                // normal vector
-                std::getline(inf, line);
-                iss << line;
-                iss >> x >> y >> z;
-                iss.clear();
-                Vector3f normal(x, y, z);
-
-                vertices.emplace_back(position, normal, 0xFFFFFFFF, j + 1);
+                vertices.push_back(p);
             }
 
-            std::getline(inf, line);
-            int numTriangles = std::stoi(line);
+            if(!bspline) m_curves.push_back(new Bezier(vertices, numSegments));
+            else         m_curves.push_back(new Bspline(vertices, k, numSegments));
 
-            for(int k = 0; k < numTriangles; ++k)
-            {
-                std::getline(inf, line);
-                iss << line;
-                int p1, p2, p3;
-                iss >> p1 >> p2 >> p3;
-                iss.clear();
-                indices.push_back(p1);
-                indices.push_back(p2);
-                indices.push_back(p3);
-
-                triangles.emplace_back(vertices[p1 - 1], vertices[p2 - 1], vertices[p3 - 1]);
-            }
-
-            m_objects.push_back(new Object(vertices, indices, triangles));
-
-            std::getline(inf, line);
-
+            std::getline(inf, line);    // empty line
         }
     }
 
@@ -266,24 +252,30 @@ void Scene::save(std::string saveFileName) const
     std::string line;
     std::stringstream iss;
 
-    outf << m_objects.size() << std::endl << std::endl;
+    outf << m_curves.size() << std::endl << std::endl;
 
-    for(auto& object : m_objects)
+    for(auto& curve : m_curves)
     {
-        outf << object->m_vertices.size() << std::endl;
+        Bspline* bspline = dynamic_cast<Bspline*>(curve);
 
-        for(auto& vertex : object->m_vertices)
+        if(!bspline)
+            outf << 0 << std::endl;
+        else
+            outf << 1 << std::endl;
+
+        outf << curve->getNumSegments() << std::endl;
+
+        /* if bspline */
+        if(bspline)
+            outf << bspline->m_k << std::endl;
+
+        outf << curve->getNumPoints() << std::endl;
+
+        for(auto& p : curve->m_points)
         {
-            outf << vertex.position.x << " " << vertex.position.y << " " << vertex.position.z << std::endl;
-            outf << vertex.normal.x << " " << vertex.normal.y << " " << vertex.normal.z << std::endl;
+            outf << p.position.x << " " << p.position.y << std::endl;
         }
 
-        outf << object->m_triangles.size() << std::endl;
-
-        for(Triangle& triangle : object->m_triangles)
-        {
-            outf << triangle.v1.index << " " << triangle.v2.index << " " << triangle.v3.index << std::endl;
-        }
 
         outf << std::endl;
     }

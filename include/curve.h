@@ -7,7 +7,7 @@
 
 class Curve
 {
-protected:
+public:
     std::vector<Vertex> m_points;
     int m_numSegments;
     int m_id;
@@ -23,7 +23,9 @@ public:
     void print() const;
 
     inline void setNumSegments(int num) {m_numSegments = num;}
+    inline int getNumSegments() const {return m_numSegments;}
     inline int getId() const {return m_id;}
+    inline int getNumPoints() const {return int(m_points.size());}
 
     virtual void draw() const = 0;
     virtual void printInfo() const = 0;
