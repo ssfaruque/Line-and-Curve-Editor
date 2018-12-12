@@ -23,6 +23,7 @@ public:
     void print() const;
 
     inline void setNumSegments(int num) {m_numSegments = num;}
+    inline int getId() const {return m_id;}
 
     virtual void draw() const = 0;
 

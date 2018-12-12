@@ -60,13 +60,28 @@ void Cli::processInput()
     else if(command == "displayCurveInfo" && tokens.size() == 1)
         cmdDisplayCurveInfo();
 
+    else if(command == "addPoint" && tokens.size() == 4)
+        cmdAddPoint(std::stoi(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]));
+
+    else if(command == "insertPoint" && tokens.size() == 5)
+        cmdInsertPoint(std::stoi(tokens[1]), std::stoi(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]));
+    
+    else if(command == "deletePoint" && tokens.size() == 3)
+        cmdDeletePoint(std::stoi(tokens[1]), std::stoi(tokens[2]));
+
+    else if(command == "modifyPoint" && tokens.size() == 5)
+        cmdModifyPoint(std::stoi(tokens[1]), std::stoi(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]));
+    
+    else if(command == "setNumSegments" && tokens.size() == 3)
+        cmdSetNumSegments(std::stoi(tokens[1]), std::stoi(tokens[2]));
+
+    else if(command == "bezier" && tokens.size() >= 4)
+        cmdBezier(tokens);
+    
 
     else if(command == "help" && tokens.size() == 1)
         cmdHelp();
 
-
-
-    
     else if(command == "exit")
         exit(0);
 
@@ -153,6 +168,12 @@ void Cli::cmdHelp() const
     std::cout << "load: 'load fileName'" << std::endl;
     std::cout << "save: 'save fileName'" << std::endl;
     std::cout << "displayCurveInfo: 'displayCurveInfo'" << std::endl;
+    std::cout << "addPoint: 'addPoint id x y'" << std::endl;
+    std::cout << "insertPoint: 'insertPoint id pointNum x y'" << std::endl;
+    std::cout << "deletePoint: 'deletePoint id pointNum'" << std::endl;
+    std::cout << "modifyPoint: 'modifyPoint id pointNum x y'" << std::endl;
+    std::cout << "setNumSegments: 'setNumSegments id numSegments'" << std::endl;
+
 
     std::cout << "exit: 'exit'" << std::endl;
 
@@ -243,6 +264,89 @@ void Cli::cmdDisplayCurveInfo() const
 }
 
 
+void Cli::cmdAddPoint(int id, float x, float y)
+{
+    for(auto& curve : m_scene->m_curves)
+    {
+        if(curve->getId() == id)
+        {
+            Vertex point(x, y, 0);
+            curve->addPoint(point);
+            break;
+        }
+    }
+}
 
 
+void Cli::cmdInsertPoint(int id, int pointNum, float x, float y)
+{
+    for(auto& curve : m_scene->m_curves)
+    {
+        if(curve->getId() == id)
+        {
+            Vertex point(x, y, 0);
+            curve->insertPoint(pointNum, point);
+            break;
+        }
+    }
+}
+
+
+void Cli::cmdDeletePoint(int id, int pointNum)
+{
+    for(auto& curve : m_scene->m_curves)
+    {
+        if(curve->getId() == id)
+        {
+            curve->deletePoint(pointNum);
+            break;
+        }
+    }
+}
+
+
+void Cli::cmdModifyPoint(int id, int pointNum, float x, float y)
+{
+    for(auto& curve : m_scene->m_curves)
+    {
+        if(curve->getId() == id)
+        {
+            Vertex point(x, y, 0);
+            curve->modifyPoint(pointNum, point);
+            break;
+        }
+    }
+}
+
+
+void Cli::cmdSetNumSegments(int id, int numSegments)
+{
+    for(auto& curve : m_scene->m_curves)
+    {
+        if(curve->getId() == id)
+        {
+            curve->setNumSegments(numSegments);
+            break;
+        }
+    }  
+}
+
+
+
+void Cli::cmdBezier(const std::vector<std::string>& tokens)
+{
+    int numSegments = std::stoi(tokens[1]);
+    std::vector<Vertex> points{};
+
+    for(int i = 2; i < int(tokens.size() - 1); i += 2)
+    {
+        float x = std::stof(tokens[i]);
+        float y = std::stof(tokens[i + 1]);
+        points.push_back(Vertex(x, y, 0));
+    }
+
+    Curve* curve = new Bezier(points, numSegments);
+
+    m_scene->m_curves.push_back(curve);
+}
 

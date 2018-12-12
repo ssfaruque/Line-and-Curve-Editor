@@ -37,8 +37,12 @@ class Cli
 
 
         void cmdDisplayCurveInfo() const;
-
-
+        void cmdAddPoint(int id, float x, float y);
+        void cmdInsertPoint(int id, int pointNum, float x, float y);
+        void cmdDeletePoint(int id, int pointNum);
+        void cmdModifyPoint(int id, int pointNum, float x, float y);
+        void cmdSetNumSegments(int id, int numSegments);
+        void cmdBezier(const std::vector<std::string>& tokens);
 
 
         std::vector<std::string> getTokensFromLine(const std::string& line) const;

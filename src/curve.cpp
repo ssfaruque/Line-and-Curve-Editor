@@ -38,7 +38,8 @@ void Curve::insertPoint(int pointNum, const Vertex& insertedPoint)
 
 void Curve::deletePoint(int pointNum)
 {
-    m_points.erase(m_points.begin() + pointNum);
+    if(int(m_points.size()) > 1)
+        m_points.erase(m_points.begin() + pointNum);
 }
 
 
